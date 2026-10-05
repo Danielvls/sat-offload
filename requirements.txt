@@ -1,0 +1,6 @@
+# agi.stk12 ships with STK 12 and is not on PyPI. Install it from the STK install:
+#   pip install "E:/STK12/STK12/bin/AgPythonAPI/agi.stk12-12.2.0-py3-none-any.whl"
+agi.stk12==12.2.0
+networkx>=3.7
+tqdm>=4.66
+pyyaml>=6.0

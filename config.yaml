@@ -1,0 +1,48 @@
+# sat-offload — run configuration.
+#
+# Both entry points read this file; there are no per-option command line flags.
+# Point at a different file with:  python save_slices.py --config other.yaml
+#
+# Unknown sections or keys are rejected, so a typo cannot silently change the
+# constellation you get.
+
+scenario:
+  name: sat-offload
+  start: "1 Oct 2026 00:00:00.000" # UTCG
+  stop: "1 Oct 2026 01:00:00.000"  # UTCG
+  step: 300.0                      # seconds between graph slices
+
+constellation:
+  planes: 20                       # P
+  sats_per_plane: 10               # S   -> T = 200
+  phasing: 45                      # F
+  inclination: 53.0                # degrees
+  altitude: 550.0                  # km, circular. Or set semi_major_axis instead.
+  eccentricity: 0.0
+  star: false                      # true = Walker Star (RAAN over 180), false = Delta (360)
+
+  # In-plane index offset used for cross-plane links: Sat{p}_{n} <-> Sat{p+1}_{n+offset}.
+  # "auto" picks the geometrically nearest neighbour, which is NOT always the
+  # same index -- it depends on the phase step F*360/T against the in-plane
+  # spacing 360/S. With 20/10/45 the phase step is 81 deg vs 36 deg spacing, so
+  # the nearest neighbour sits 3 indices back; same-index pairs are ~9900 km
+  # apart and never see each other. Set an integer to pin it.
+  inter_plane_offset: auto
+
+output:
+  directory: data/slices
+  overwrite: false                 # save_slices.py refuses a non-empty directory without this
+
+run:
+  mode: desktop                    # desktop = STK GUI, colours work | engine = headless
+  visible: true                    # desktop only; false keeps the STK window hidden
+  colors: true                     # per-plane colouring (needs desktop mode)
+  with_lla: false                  # tag every node with lat/lon on each slice
+  progress: true                   # tqdm progress bars
+  log_level: INFO
+
+# Only main.py acts on this -- save_slices.py is a data run and always closes STK.
+visualization:
+  enabled: true                    # leave the scenario loaded in STK after building
+  links: true                      # draw the ISL lines, live on their access intervals
+  link_width: 2                    # access line width
